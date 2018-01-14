@@ -12,6 +12,7 @@ namespace dsi {
 
 using namespace ci;
 
+
 ImageRef Image::create( const ci::fs::path &path ) {
 
 	auto output = std::make_shared<Image>();
@@ -20,6 +21,11 @@ ImageRef Image::create( const ci::fs::path &path ) {
 	return output;
 }
 
+ImageRef Image::create( size_t w, size_t h ) {
+	auto output = std::make_shared<Image>();
+	output->mChannel = Channel::create( w, h );
+	return output;
+}
 
 const uint8_t *Image::getData() const {
 	return mChannel->getData();

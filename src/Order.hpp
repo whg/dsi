@@ -23,6 +23,9 @@ public:
 
 	const lookup_table_t getTable() const { return mTable; }
 
+	size_t getWidth() const { return mWidth; }
+	size_t getHeight() const { return mHeight; }
+
 protected:
 	size_t mWidth, mHeight;
 	lookup_table_t mTable;

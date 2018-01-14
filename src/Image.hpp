@@ -20,7 +20,10 @@ using ImageRef = std::shared_ptr<class Image>;
 
 class Image {
 public:
+	Image() = default;
+
 	static ImageRef create( const ci::fs::path &path );
+	static ImageRef create( size_t w, size_t h );
 
 	void draw();
 

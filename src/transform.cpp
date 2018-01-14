@@ -28,7 +28,7 @@ AudioRef create( const ImageRef &image, const OrderRef &order ) {
 
 ImageRef create( const AudioRef &audio, const OrderRef &order ) {
 
-	auto image = std::make_shared<Image>();
+	auto image = Image::create( order->getWidth(), order->getHeight() );
 
 	const float *ad = audio->getData();
 	size_t n = audio->size();

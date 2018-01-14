@@ -39,11 +39,15 @@ void dsiApp::setup() {
 	setWindowSize( windowSize );
 
 	auto imageSize = windowSize / 10;
-	auto order = make_shared<dsi::Order>( imageSize.x, imageSize.y );
+	auto order = make_shared<dsi::RandomOrder>( imageSize.x, imageSize.y );
 
 //	dsi::ImageRef image = dsi::Image::create( "/home/whg/workspace/tiling-inter/intersection/assets/test-comp-3.jpg" );
-	mImage = dsi::Image::create( "/home/whg/workspace/sine_hd10_0.01.png" );
-	mAudio = dsi::transform::create( mImage, order );
+//	mImage = dsi::Image::create( "/home/whg/workspace/sine_hd10_0.01.png" );
+//	mAudio = dsi::transform::create( mImage, order );
+
+	mAudio = dsi::Audio::create( "/home/whg/workspace/sine50hz.wav" );
+//	mImage = dsi::transform:::create( mAudio, order );
+	mImage = dsi::transform::create( mAudio, order );
 
 	auto ctx = audio::Context::master();
 	mBufferPlayer = ctx->makeNode( new audio::BufferPlayerNode( mAudio->getBuffer() ) );

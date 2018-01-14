@@ -15,7 +15,7 @@ AudioRef Audio::create( const ci::fs::path &path ) {
 
 	auto output = std::make_shared<Audio>();
 
-	auto sourceFile = audio::load( app::loadAsset( path ) );
+	auto sourceFile = audio::load( loadFile( path ) );
 	output->mBuffer = sourceFile->loadBuffer();
 
 	return output;

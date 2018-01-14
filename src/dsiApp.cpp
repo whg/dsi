@@ -6,8 +6,10 @@
 
 #include "Image.hpp"
 #include "Audio.hpp"
+#include "Order.hpp"
 #include "transform.hpp"
 
+using namespace std;
 using namespace ci;
 using namespace ci::app;
 
@@ -27,14 +29,21 @@ class dsiApp : public App {
 
 	dsi::ImageRef mImage;
 	dsi::AudioRef mAudio;
+
+
 };
 
 void dsiApp::setup() {
     getWindow()->setTitle( "CinderApp" );
+	ivec2 windowSize( 1920, 1080 );
+	setWindowSize( windowSize );
+
+	auto imageSize = windowSize / 10;
+	auto order = make_shared<dsi::Order>( imageSize.x, imageSize.y );
 
 //	dsi::ImageRef image = dsi::Image::create( "/home/whg/workspace/tiling-inter/intersection/assets/test-comp-3.jpg" );
-	mImage = dsi::Image::create( "/home/whg/workspace/sine.png" );
-	mAudio = dsi::transform::create( mImage );
+	mImage = dsi::Image::create( "/home/whg/workspace/sine_hd10_0.01.png" );
+	mAudio = dsi::transform::create( mImage, order );
 
 	auto ctx = audio::Context::master();
 	mBufferPlayer = ctx->makeNode( new audio::BufferPlayerNode( mAudio->getBuffer() ) );

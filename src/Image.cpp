@@ -37,9 +37,10 @@ int32_t Image::size() const {
 void Image::draw() {
 	if ( !mTexture ) {
 		mTexture = gl::Texture::create( *mChannel );
+		mTexture->setMagFilter( GL_NEAREST );
 	}
 
-	gl::draw( mTexture );
+	gl::draw( mTexture, Rectf( vec2(), vec2( app::getWindowSize() ) ) );
 }
 
 

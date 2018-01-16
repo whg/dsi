@@ -16,7 +16,7 @@ AudioRef create( const ImageRef &image, const OrderRef &order ) {
 	float *ad = new float[n];
 	const auto &table = order->getTable();
 	for ( size_t i = 0; i < table.size(); i++ ) {
-		ad[i] = id[table[i]] / 128.f - 1.f;
+		ad[table[i]] = id[i] / 128.f - 1.f;
 	}
 
 	audio->setData( ad, n );
@@ -36,7 +36,7 @@ ImageRef create( const AudioRef &audio, const OrderRef &order ) {
 	uint8_t *id = new uint8_t[n];
 	const auto &table = order->getTable();
 	for ( size_t i = 0; i < table.size(); i++ ) {
-		id[i] = static_cast<uint8_t>( ad[table[i]] * 128.f + 128.f );
+		id[table[i]] = static_cast<uint8_t>( ad[i] * 128.f + 128.f );
 	}
 
 	image->setData( id, n );

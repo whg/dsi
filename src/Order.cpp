@@ -3,8 +3,7 @@
 //
 
 #include "Order.hpp"
-
-#include "cinder/Rand.h"
+#include "cinder/Channel.h"
 
 namespace dsi {
 
@@ -23,6 +22,16 @@ void Order::fill() {
 	std::cout << "normal" << std::endl;
 }
 
+ci::gl::TextureRef Order::getTexture( size_t sampleRate ) {
+	ci::Channel32f channel( mWidth, mHeight );
+	auto *data = channel.getData();
+	auto sampleRatef = static_cast<float>( sampleRate );
+	for ( size_t i = 0; i < mTable.size(); i++ ) {
+		data[mTable[i]] = i / sampleRatef;
+	}
+	return ci::gl::Texture::create( channel );
+}
+
 
 void ColumnMajorOrder::fill() {
 	size_t i = 0, index = 0;
@@ -37,6 +46,8 @@ void ColumnMajorOrder::fill() {
 
 void RandomOrder::fill() {
 
+	Order::fill();
+
 	size_t a, b, temp;
 	for ( size_t i = 0; i < mTable.size(); i++ ) {
 		a = static_cast<size_t>( mRand.nextInt( mTable.size() ) );
@@ -49,5 +60,125 @@ void RandomOrder::fill() {
 	std::cout << "random" << std::endl;
 }
 
+void SpiralInOrder::fill() {
+	int x = 0, y = 0, i = 0;
+	int w = static_cast<int>( mWidth ), h = static_cast<int>( mHeight );
+
+	for ( x = 0; x < w; x++ ) mTable[i++] = x + y * mWidth;
+	--x;
+	for ( y = 0; y < h; y++ ) mTable[i++] = x + y * mWidth;
+	--y;
+	for ( ; x >= 0; x-- ) mTable[i++] = x + y * mWidth;
+	++x;
+	for ( ; y >= 1; y--) mTable[i++] = x + y * mWidth;
+	++y;
+
+	w--;
+	h-= 2;
+
+	while ( w > 0 && h > 0 ) {
+		for ( size_t n = 0; n < w; n++, x++ ) mTable[i++] = x + y * mWidth;
+		--x;
+		--w;
+//		if ( --w <= 0 ) break;
+		for ( size_t n = 0; n < h; n++, y++ ) mTable[i++] = x + y * mWidth;
+		--y;
+		--h;
+//		if ( --h <= 0 ) break;
+		for ( size_t n = 0; n < w; n++, x-- ) mTable[i++] = x + y * mWidth;
+		++x; --w;
+//		if ( --w <= 0 ) break;
+		for ( size_t n = 0; n < h; n++, y--) mTable[i++] = x + y * mWidth;
+		++y;
+		--h;
+//		if ( --h <= 0 ) break;
+	}
+
+
+}
+
+void ZigZagOrder::fill() {
+
+	size_t i = 0;
+	int x = 1, y = 0;
+
+	mTable[i++] = 0;
+
+	while ( i < mTable.size() ) {
+		do {
+//			std::cout << i << " a: " << x << ", " << y << std::endl;
+			mTable[i++] = x + y * mWidth;
+			--x;
+			++y;
+		} while ( x >= 0 && y < mHeight && i < mTable.size() );
+
+
+		if ( y >= mHeight ) {
+			y = static_cast<int>( mHeight - 1 );
+			x+= 2;
+		} else if ( x < 0 ) {
+			x = 0;
+		}
+
+		do {
+//			std::cout << i << " b: " << x << ", " << y << std::endl;
+			mTable[i++] = x + y * mWidth;
+			++x;
+			--y;
+		} while ( x < mWidth && y >= 0 && i < mTable.size() );
+
+		if ( y < 0 ) {
+			y = 0;
+		} else if ( x >= mWidth ) {
+			x = static_cast<int>( mWidth - 1 );
+			y+= 2;
+		}
+
+	}
+
+//
+//	while ( i < mTable.size() ) {
+//		for ( ; ; x--, y++ ) {
+//			if ( y >= mHeight ) {
+//				--y;
+////				++x;
+//				break;
+//			}
+//			else if ( x < 0 ) {
+//				++x;
+////				y+= 1;
+//				break;
+//			}
+//			mTable[i++] = x + y * mWidth;
+////			std::cout << i << " a: " << x << ", " << y << std::endl;
+//		}
+////		if ( x < 0 ) {
+////			x = 0;
+//////			y++;
+////		}
+////		--y;
+//		for ( ; ; y--, x++ ) {
+//			if ( x >= mWidth ) {
+//				--x;
+////				y+= 1;
+//				break;
+//			}
+//			else if ( y < 0 ) {
+//				++y;
+////				x+= 1;
+//				break;
+//			}
+//			mTable[i++] = x + y * mWidth;
+////			std::cout << i << " b: " << x << ", " << y << std::endl;
+//		}
+////		if ( y < 0 ) {
+////			y = 0;
+//////			x++;
+////		}
+//	}
+
+	std::cout << "done" << std::endl;
+
+}
 
 }

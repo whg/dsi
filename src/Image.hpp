@@ -25,7 +25,7 @@ public:
 	static ImageRef create( const ci::fs::path &path );
 	static ImageRef create( size_t w, size_t h );
 
-	void draw();
+	ci::gl::TextureRef getTexture();
 
 	const uint8_t* getData() const;
 	void setData( const uint8_t *data, size_t n );

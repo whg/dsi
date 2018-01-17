@@ -27,6 +27,11 @@ public:
 
 	ci::gl::TextureRef getTexture();
 
+	int32_t getWidth() const { return mChannel->getWidth(); }
+	int32_t getHeight() const { return mChannel->getHeight(); }
+
+	ci::ivec2 getSize() const { return mChannel->getSize(); }
+
 	const uint8_t* getData() const;
 	void setData( const uint8_t *data, size_t n );
 

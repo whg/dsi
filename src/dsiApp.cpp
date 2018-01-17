@@ -45,22 +45,25 @@ void dsiApp::setup() {
 	ivec2 windowSize( 1920, 1080 );
 	setWindowSize( windowSize );
 
-//	auto order = dsi::createOrder<dsi::ZigZagOrder>( 6, 4 );
+//	auto order = dsi::createOrder<dsi::SpiralInOrder>( 8, 6 );
 //
 //	std::terminate();
 
-	auto imageSize = windowSize / 7;
+//	auto imageSize = windowSize / 7;
 //	mOrder = make_shared<dsi::SpiralInOrder>( imageSize.x, imageSize.y );
-	mOrder = dsi::createOrder<dsi::ZigZagOrder>( imageSize.x, imageSize.y );
+//	mOrder = dsi::createOrder<dsi::ZigZagOrder>( imageSize.x, imageSize.y );
 //	mOrder = dsi::Order::create<dsi::RandomOrder>( imageSize.x, imageSize.y );
-
+//
 //	dsi::ImageRef image = dsi::Image::create( "/home/whg/workspace/tiling-inter/intersection/assets/test-comp-3.jpg" );
-//	mImage = dsi::Image::create( "/home/whg/workspace/sine_hd10_0.01.png" );
-//	mAudio = dsi::transform::create( mImage, mOrder );
+	mImage = dsi::Image::create( "/home/whg/workspace/sine_hd10_0.01.png" );
+	auto imageSize = mImage->getSize();
+	mOrder = dsi::createOrder<dsi::SpiralOutOrder>( imageSize.x, imageSize.y );
+	mAudio = dsi::transform::create( mImage, mOrder );
 
-	mAudio = dsi::Audio::create( "/home/whg/workspace/sine50hz.wav" );
-//	mImage = dsi::transform:::create( mAudio, order );
-	mImage = dsi::transform::create( mAudio, mOrder );
+
+
+//	mAudio = dsi::Audio::create( "/home/whg/workspace/sine50hz.wav" );
+//	mImage = dsi::transform::create( mAudio, mOrder );
 
 	auto ctx = audio::Context::master();
 	mBufferPlayer = ctx->makeNode( new audio::BufferPlayerNode( mAudio->getBuffer() ) );

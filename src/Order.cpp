@@ -64,37 +64,62 @@ void SpiralInOrder::fill() {
 	int x = 0, y = 0, i = 0;
 	int w = static_cast<int>( mWidth ), h = static_cast<int>( mHeight );
 
-	for ( x = 0; x < w; x++ ) mTable[i++] = x + y * mWidth;
-	--x;
-	for ( y = 0; y < h; y++ ) mTable[i++] = x + y * mWidth;
-	--y;
-	for ( ; x >= 0; x-- ) mTable[i++] = x + y * mWidth;
-	++x;
-	for ( ; y >= 1; y--) mTable[i++] = x + y * mWidth;
-	++y;
+	for ( x = 0; x < w; x++ ) {
+		mTable[i++] = x + y * mWidth;
+	}
+	x--;
+	for ( y = 1; y < h; y++ ) {
+		mTable[i++] = x + y * mWidth;
+	}
+	y--;
+	x--;
+	for ( ; x >= 0; x-- ) {
+		mTable[i++] = x + y * mWidth;
+	}
+	x++;
+	y--;
+	for ( ; y >= 1; y--) {
+		mTable[i++] = x + y * mWidth;
+	}
+	y++;
+	x++;
 
 	w--;
 	h-= 2;
 
 	while ( w > 0 && h > 0 ) {
-		for ( size_t n = 0; n < w; n++, x++ ) mTable[i++] = x + y * mWidth;
-		--x;
+		for ( size_t n = 1; n < w; n++, x++ ) {
+			mTable[i++] = x + y * mWidth;
+		}
+		x--;
+		y++;
 		--w;
-//		if ( --w <= 0 ) break;
-		for ( size_t n = 0; n < h; n++, y++ ) mTable[i++] = x + y * mWidth;
-		--y;
+		for ( size_t n = 1; n < h; n++, y++ ) {
+			mTable[i++] = x + y * mWidth;
+		}
+		y--;
+		x--;
 		--h;
-//		if ( --h <= 0 ) break;
-		for ( size_t n = 0; n < w; n++, x-- ) mTable[i++] = x + y * mWidth;
-		++x; --w;
-//		if ( --w <= 0 ) break;
-		for ( size_t n = 0; n < h; n++, y--) mTable[i++] = x + y * mWidth;
-		++y;
+		for ( size_t n = 1; n < w; n++, x-- ) {
+			mTable[i++] = x + y * mWidth;
+		}
+		x++;
+		y--;
+		--w;
+		for ( size_t n = 1; n < h; n++, y--) {
+			mTable[i++] = x + y * mWidth;
+		}
+		y++;
+		x++;
 		--h;
-//		if ( --h <= 0 ) break;
 	}
 
 
+}
+
+void SpiralOutOrder::fill() {
+	SpiralInOrder::fill();
+	std::reverse( std::begin( mTable ), std::end( mTable ) );
 }
 
 void ZigZagOrder::fill() {
@@ -106,7 +131,6 @@ void ZigZagOrder::fill() {
 
 	while ( i < mTable.size() ) {
 		do {
-//			std::cout << i << " a: " << x << ", " << y << std::endl;
 			mTable[i++] = x + y * mWidth;
 			--x;
 			++y;
@@ -121,7 +145,6 @@ void ZigZagOrder::fill() {
 		}
 
 		do {
-//			std::cout << i << " b: " << x << ", " << y << std::endl;
 			mTable[i++] = x + y * mWidth;
 			++x;
 			--y;
@@ -135,50 +158,7 @@ void ZigZagOrder::fill() {
 		}
 
 	}
-
-//
-//	while ( i < mTable.size() ) {
-//		for ( ; ; x--, y++ ) {
-//			if ( y >= mHeight ) {
-//				--y;
-////				++x;
-//				break;
-//			}
-//			else if ( x < 0 ) {
-//				++x;
-////				y+= 1;
-//				break;
-//			}
-//			mTable[i++] = x + y * mWidth;
-////			std::cout << i << " a: " << x << ", " << y << std::endl;
-//		}
-////		if ( x < 0 ) {
-////			x = 0;
-//////			y++;
-////		}
-////		--y;
-//		for ( ; ; y--, x++ ) {
-//			if ( x >= mWidth ) {
-//				--x;
-////				y+= 1;
-//				break;
-//			}
-//			else if ( y < 0 ) {
-//				++y;
-////				x+= 1;
-//				break;
-//			}
-//			mTable[i++] = x + y * mWidth;
-////			std::cout << i << " b: " << x << ", " << y << std::endl;
-//		}
-////		if ( y < 0 ) {
-////			y = 0;
-//////			x++;
-////		}
-//	}
-
-	std::cout << "done" << std::endl;
-
 }
+
 
 }

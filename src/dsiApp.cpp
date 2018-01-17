@@ -26,8 +26,6 @@ class dsiApp : public App {
 
 	audio::BufferPlayerNodeRef mBufferPlayer;
 	audio::GainNodeRef mGain;
-	audio::VoiceRef mVoice;
-	float mPhase;
 
 	dsi::ImageRef mImage;
 	dsi::AudioRef mAudio;
@@ -64,10 +62,10 @@ void dsiApp::setup() {
 //	cout << imageSize << endl;
 
 
-	ivec2 imageSize( 820, 820 );
-	mOrder = dsi::createOrder<dsi::SpiralOutOrder>( imageSize.x, imageSize.y );
+	ivec2 imageSize( 200, 1800 );
+	mOrder = dsi::createOrder<dsi::ColumnMajorOrder>( imageSize.x, imageSize.y );
 
-	mAudio = dsi::Audio::create( "/home/whg/workspace/voice1.wav" );
+	mAudio = dsi::Audio::create( "/home/whg/workspace/tones_pan.wav" );
 	mImage = dsi::transform::create( mAudio, mOrder );
 
 	auto ctx = audio::Context::master();
@@ -77,20 +75,7 @@ void dsiApp::setup() {
 	mGain = ctx->makeNode( new audio::GainNode );
 	mGain->setValue( 0.5f );
 
-//	mVoice = audio::Voice::create( [this] ( audio::Buffer *buffer, size_t sampleRate ) {
-//	   float *channel0 = buffer->getChannel( 0 );
-//
-//	   // generate a 440 hertz sine wave
-//	   float phaseIncr = ( 440.0f / (float)sampleRate ) * 2 * (float)M_PI;
-//	   for( size_t i = 0; i < 	void fill();
-//buffer->getNumFrames(); i++ )    {
-//		   mPhase = fmodf( mPhase + phaseIncr, 2 * M_PI );
-//		   channel0[i] = std::sin( mPhase );
-//	   }
-//	} );
-//	mVoice->start();
 	mBufferPlayer >> mGain >> ctx->getOutput();
-
 
 
 	mBufferPlayer->start();
@@ -106,6 +91,8 @@ void dsiApp::setup() {
 
 	mOrderTexture = mOrder->getTexture( ctx->getSampleRate() );
 	ctx->enable();
+
+	hideCursor();
 }
 
 void dsiApp::quit() {
@@ -114,7 +101,7 @@ void dsiApp::quit() {
 
 void dsiApp::mouseDown( MouseEvent event ) {}
 void dsiApp::keyDown( KeyEvent event ) {
-	mBufferPlayer->start();
+	mBufferPlayer->start( audio::master()->getNumProcessedSeconds() + 3 );
 	mLastStartTime = app::getElapsedSeconds();
 
 }
@@ -137,17 +124,10 @@ void dsiApp::draw() {
 		gl::ScopedTextureBind orderTex( mOrderTexture, 1 );
 
 		mShader->uniform( "uOrderTex", 1 );
-		mShader->uniform( "uPlayhead", static_cast<float>( getElapsedSeconds() - mLastStartTime ) );
-//		cout << (getElapsedSeconds() - mLastStartTime) << endl;
+		mShader->uniform( "uPlayhead", static_cast<float>( mBufferPlayer->getReadPositionTime() ) );
+
 		gl::drawSolidRect( Rectf( 0, 0, imageTexture->getWidth(), imageTexture->getHeight() ) );
-
-//		gl::draw( imageTexture );
 	}
-
-//	cout << mImage->getTexture()->getInternalFormat() << endl;
-//	gl::draw( mImage->getTexture(), Rectf( vec2(), vec2( app::getWindowSize() ) ) );
-
-//	gl::drawSolidRect( Rectf( vec2(), vec2( )));
 
 	gl::draw( mFbo->getColorTexture(), Rectf( vec2(), vec2( app::getWindowSize() ) ) );
 }

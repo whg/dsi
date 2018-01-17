@@ -35,6 +35,8 @@ protected:
 
 };
 
+using RowMajorOrder = Order;
+
 class ColumnMajorOrder : public Order {
 public:
 	ColumnMajorOrder( size_t w, size_t h ): Order( w, h ) { fill(); }

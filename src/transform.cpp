@@ -53,8 +53,10 @@ ImageRef create( const AudioRef &audio, const OrderRef &order ) {
 	size_t ti;
 	for ( size_t i = 0; i < N; i++ ) {
 		ti = table[i];
+//		id[ti * pinc + ro] = static_cast<uint8_t>( lad[i] * 128.f + 128.f );
 		id[ti * pinc + go] = static_cast<uint8_t>( lad[i] * 128.f + 128.f );
 		id[ti * pinc + bo] = static_cast<uint8_t>( rad[i] * 128.f + 128.f );
+//		id[ti * pinc + ro] = 255;
 	}
 
 	return image;

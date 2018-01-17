@@ -8,20 +8,27 @@ namespace dsi { namespace transform {
 
 AudioRef create( const ImageRef &image, const OrderRef &order ) {
 
-	auto audio = std::make_shared<Audio>();
-
 	const uint8_t *id = image->getData();
-	size_t n = image->size();
+	const auto &channelOrder = image->getChannelOrder();
+	auto ro = channelOrder.getRedOffset();
+	auto go = channelOrder.getGreenOffset();
+	auto bo = channelOrder.getBlueOffset();
+	auto pinc = image->getPixelInc();
 
-	float *ad = new float[n];
+	auto n = image->size();
+
+	auto audio = Audio::create( n );
+
+	float *lad = audio->getLeftChannel();
+	float *rad = audio->getRightChannel();
 	const auto &table = order->getTable();
+
+	size_t ti;
 	for ( size_t i = 0; i < table.size(); i++ ) {
-		ad[table[i]] = id[i] / 128.f - 1.f;
+		ti = table[i];
+		lad[ti] = id[i * pinc + go] / 128.f - 1.f;
+		rad[ti] = id[i * pinc + bo] / 128.f - 1.f;
 	}
-
-	audio->setData( ad, n );
-
-	delete[] ad;
 
 	return audio;
 }
@@ -30,18 +37,25 @@ ImageRef create( const AudioRef &audio, const OrderRef &order ) {
 
 	auto image = Image::create( order->getWidth(), order->getHeight() );
 
-	const float *ad = audio->getData();
-	size_t n = audio->size();
+	uint8_t *id = image->getData();
+	const auto &channelOrder = image->getChannelOrder();
+	auto ro = channelOrder.getRedOffset();
+	auto go = channelOrder.getGreenOffset();
+	auto bo = channelOrder.getBlueOffset();
+	auto pinc = image->getPixelInc();
 
-	uint8_t *id = new uint8_t[n];
+	const float *lad = audio->getLeftChannel();
+	const float *rad = audio->getRightChannel();
+
 	const auto &table = order->getTable();
-	for ( size_t i = 0; i < table.size(); i++ ) {
-		id[table[i]] = static_cast<uint8_t>( ad[i] * 128.f + 128.f );
+	size_t N = std::min( table.size(), audio->size() );
+
+	size_t ti;
+	for ( size_t i = 0; i < N; i++ ) {
+		ti = table[i];
+		id[ti * pinc + go] = static_cast<uint8_t>( lad[i] * 128.f + 128.f );
+		id[ti * pinc + bo] = static_cast<uint8_t>( rad[i] * 128.f + 128.f );
 	}
-
-	image->setData( id, n );
-
-	delete[] id;
 
 	return image;
 }

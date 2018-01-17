@@ -29,7 +29,7 @@ ci::gl::TextureRef Order::getTexture( size_t sampleRate ) {
 	for ( size_t i = 0; i < mTable.size(); i++ ) {
 		data[mTable[i]] = i / sampleRatef;
 	}
-	return ci::gl::Texture::create( channel );
+	return ci::gl::Texture::create( channel, ci::gl::Texture::Format().dataType( GL_FLOAT ).internalFormat( GL_R32F ) );
 }
 
 

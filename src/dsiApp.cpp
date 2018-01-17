@@ -55,15 +55,20 @@ void dsiApp::setup() {
 //	mOrder = dsi::Order::create<dsi::RandomOrder>( imageSize.x, imageSize.y );
 //
 //	dsi::ImageRef image = dsi::Image::create( "/home/whg/workspace/tiling-inter/intersection/assets/test-comp-3.jpg" );
-	mImage = dsi::Image::create( "/home/whg/workspace/sine_hd10_0.01.png" );
-	auto imageSize = mImage->getSize();
+
+//	mImage = dsi::Image::create( "/home/whg/workspace/face_gb.jpg" ); //sine2.png" ); //sine_hd10_0.01.png" );
+//	auto imageSize = mImage->getSize();
+//	mOrder = dsi::createOrder<dsi::ZigZagOrder>( imageSize.x, imageSize.y );
+//	mAudio = dsi::transform::create( mImage, mOrder );
+
+//	cout << imageSize << endl;
+
+
+	ivec2 imageSize( 820, 820 );
 	mOrder = dsi::createOrder<dsi::SpiralOutOrder>( imageSize.x, imageSize.y );
-	mAudio = dsi::transform::create( mImage, mOrder );
 
-
-
-//	mAudio = dsi::Audio::create( "/home/whg/workspace/sine50hz.wav" );
-//	mImage = dsi::transform::create( mAudio, mOrder );
+	mAudio = dsi::Audio::create( "/home/whg/workspace/voice1.wav" );
+	mImage = dsi::transform::create( mAudio, mOrder );
 
 	auto ctx = audio::Context::master();
 	mBufferPlayer = ctx->makeNode( new audio::BufferPlayerNode( mAudio->getBuffer() ) );
@@ -133,7 +138,7 @@ void dsiApp::draw() {
 
 		mShader->uniform( "uOrderTex", 1 );
 		mShader->uniform( "uPlayhead", static_cast<float>( getElapsedSeconds() - mLastStartTime ) );
-
+//		cout << (getElapsedSeconds() - mLastStartTime) << endl;
 		gl::drawSolidRect( Rectf( 0, 0, imageTexture->getWidth(), imageTexture->getHeight() ) );
 
 //		gl::draw( imageTexture );

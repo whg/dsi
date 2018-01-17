@@ -13,38 +13,54 @@ namespace dsi {
 using namespace ci;
 
 
+Image::Image( const ci::fs::path &path ):
+		Surface( loadImage( loadFile( path ) ) ) {
+}
+
+Image::Image( int32_t w, int32_t h ):
+		Surface( w, h, false, SurfaceChannelOrder::RGB ){
+}
+
 ImageRef Image::create( const ci::fs::path &path ) {
 
-	auto output = std::make_shared<Image>();
-	output->mChannel = Channel::create( loadImage( loadFile( path ) ) );
+
+	ImageRef output = std::make_shared<Image>( path );
+	output->mTexture = nullptr;
+
+	auto r = output->getChannelBlue().getData();
+	for ( int i = 0; i < 10; i++ ) std::cout << int(r[i]) << " ";
+	std::cout << std::endl;
+
+	auto d = output->getData();
+	for ( int i = 0; i < 10; i+= 3 ) std::cout << int(r[i]) << " " << int(r[i+1]) << " " << int(r[i+2]) << " ";
+	std::cout << std::endl;
+
+	return output;
+}
+
+ImageRef Image::create( int32_t w, int32_t h ) {
+	ImageRef output = std::make_shared<Image>( w, h );
 	output->mTexture = nullptr;
 	return output;
 }
 
-ImageRef Image::create( size_t w, size_t h ) {
-	auto output = std::make_shared<Image>();
-	output->mChannel = Channel::create( w, h );
-	output->mTexture = nullptr;
-	return output;
-}
+//const uint8_t* Image::getData() const {
+//	return mSurface->getData();
+//}
 
-const uint8_t *Image::getData() const {
-	return mChannel->getData();
-}
-
-void Image::setData( const uint8_t *data, size_t n ) {
-	auto N = std::min( static_cast<size_t>( this->size() ), n );
-	std::copy( data, data + N, mChannel->getData() );
-	this->mTexture = nullptr;
-}
+//void Image::setData( const uint8_t *data, size_t n ) {
+//	auto N = std::min( static_cast<size_t>( this->size() ), n );
+//	std::copy( data, data + N, mSurface->getData() );
+//	this->mTexture = nullptr;
+//}
 
 int32_t Image::size() const {
-	return mChannel->getWidth() * mChannel->getHeight();
+	return getWidth() * getHeight();
 }
 
 gl::TextureRef Image::getTexture() {
 	if ( !mTexture ) {
-		mTexture = gl::Texture::create( *mChannel );
+		mTexture = gl::Texture::create( *this );
 		mTexture->setMagFilter( GL_NEAREST );
 	}
 	return mTexture;
